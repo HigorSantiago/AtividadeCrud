@@ -1,0 +1,31 @@
+
+{
+  "students": [
+    {
+      "name": "Jefferson de Carvalho Silva",
+      "course": "Sistemas de Informação",
+      "ira": 6.7,
+      "id": 0
+    },
+    {
+      "id": 1,
+      "name": "Fulano de Tal",
+      "course": "Sistemas de Informação",
+      "ira": 4.5
+    },
+    {
+      "name": "Sicrano de Tal da Silva",
+      "course": "Sistemas de Informação",
+      "ira": 9,
+      "id": 2
+    }
+  ],
+  "teachers": [
+    {
+      "name": "Aragão",
+      "university": "UFC - Quixada",
+      "degree": "Doutorado",
+      "id": 0
+    }
+  ]
+}
