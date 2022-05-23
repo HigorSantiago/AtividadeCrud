@@ -13,7 +13,7 @@ function EditProfessor(props) {
     
     useEffect(
         ()=>{
-            axios.get('http://localhost:3002/crud/professors/update/' +params.id)
+            axios.get('http://localhost:3002/crud/professors/retrieve/' +params.id)
             .then(
                 (response)=>{
                     setName(response.data.name)

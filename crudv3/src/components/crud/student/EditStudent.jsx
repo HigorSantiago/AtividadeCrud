@@ -11,7 +11,7 @@ const EditStudent = (props) => {
     const navigate = useNavigate();
     useEffect(
         () => {
-            axios.get('http://localhost:3002/crud/students/update/' + params.id)
+            axios.get('http://localhost:3002/crud/students/retrieve/' + params.id)
                 .then(
                     (res) => {
                         setName(res.data.name)
