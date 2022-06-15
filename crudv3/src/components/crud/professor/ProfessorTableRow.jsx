@@ -1,20 +1,23 @@
-import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ProfessorTableRow = (props) => {
+import FirebaseProfessorService from "../../../services/FirebaseProfessorService";
 
+
+const ProfessorTableRow = (props) => {
     const {_id,name,university,degree} = props.professor
-    
-    function deleteProfessor(){
-        if(window.confirm(`Deseja excluir o professor do Id: ${_id}`)){
-            axios.delete(`http://localhost:3002/crud/professors/delete/${_id}`)
-            .then(
-                response=>(
-                    props.deleteProfessorById(_id)
-                )
+
+    function deleteProfessor() {
+        if (window.confirm(`Deseja excluir o elemento de ID: ${_id}?`)) {
+
+            FirebaseProfessorService.delete(
+                props.firestore,
+                (ok)=>{
+                    if (ok) console.log('Apagado com sucesso!')
+                },
+                _id
             )
-            .catch(error=>console.log(error))
+
         }
     }
 
@@ -36,7 +39,7 @@ const ProfessorTableRow = (props) => {
                 <Link to={`/editProfessor/${_id}`} className="btn btn-primary">Editar</Link>
             </td>
             <td style={{textAlign:"center"}}>
-                <button className="btn btn-danger" onClick={deleteProfessor}>Apagar</button>
+                <button className="btn btn-danger"  onClick={() => deleteProfessor()}>Apagar</button>
             </td>
         </tr>
     )

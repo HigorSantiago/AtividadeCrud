@@ -1,29 +1,43 @@
-import React, { useState } from 'react'
-import { Link } from "react-router-dom";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-const CreateProfessor = () => {
+import FirebaseContext from "../../../utils/FirebaseContext";
+import FirebaseProfessorService from "../../../services/FirebaseProfessorService";
+import RestrictedPage from "../../../utils/RestrictedPage";
+
+const CreateProfessorPage = () =>
+    <FirebaseContext.Consumer>
+        {
+            (firebase) => 
+                <RestrictedPage isLogged={firebase.getUser() != null}>
+                    <CreateProfessor firebase={firebase} />
+                </RestrictedPage>
+            
+        }
+    </FirebaseContext.Consumer>
+
+function CreateProfessor(props) {
+
     const [name, setName] = useState("")
     const [university, setUniversity] = useState("")
     const [degree, setDegree] = useState("")
     const navigate = useNavigate()
 
     const handleSubmit = (event) => {
-
         event.preventDefault()
 
-        const newProfessor = {name,university,degree}
-        axios.post("http://localhost:3002/crud/professors/create",newProfessor)
-        .then(
-            (response)=>{
-                console.log(response.data._id)
-                alert("Novo Professor Criado")
-                navigate("/listTeacher")
-            }
-        )
-                
-        .catch(error=>console.log(error))
+        const newProfessor = { name, university, degree }
+       
+       FirebaseProfessorService.create(
+           props.firebase.getFirestoreDb(),
+           (_id)=>{
+        
+             alert(`Aluno ${name} criado com sucesso com id ${_id}.`)
+             navigate("/listProfessor")
+           },
+           newProfessor
+       )
+
     }
 
     return (
@@ -50,7 +64,7 @@ const CreateProfessor = () => {
                             onChange={(event) => { setUniversity(event.target.value) }} />
                     </div>
                     <div className="form-group">
-                        <label>Titulação: </label>
+                        <label>Degree: </label>
                         <input type="text"
                             className="form-control"
                             value={degree ?? 0}
@@ -69,4 +83,4 @@ const CreateProfessor = () => {
     );
 }
 
-export default CreateProfessor
+export default CreateProfessorPage

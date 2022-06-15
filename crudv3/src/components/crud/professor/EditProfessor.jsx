@@ -1,43 +1,65 @@
 import React, { useState, useEffect } from "react";
 
 import { Link, useParams,useNavigate } from "react-router-dom";
-import axios from 'axios';
+import RestrictedPage from "../../../utils/RestrictedPage";
+import FirebaseContext from "../../../utils/FirebaseContext";
+import FirebaseProfessorService from "../../../services/FirebaseProfessorService";
+
+
+const EditProfessorPage = () =>
+    <FirebaseContext.Consumer>
+        {
+            (firebase)=> 
+                <RestrictedPage isLogged={firebase.getUser() != null}>
+                    <EditProfessor firebase={firebase} />
+                </RestrictedPage>
+        }
+    </FirebaseContext.Consumer>
 
 function EditProfessor(props) {
 
     const [name, setName] = useState("")
     const [university, setUniversity] = useState("")
-    const [degree, setDegree] = useState("Graduado")
+    const [degree, setDegree] = useState("")
     const navigate = useNavigate();
     const params = useParams()
     
+    
     useEffect(
-        ()=>{
-            axios.get('http://localhost:3002/crud/professors/retrieve/' +params.id)
-            .then(
-                (response)=>{
-                    setName(response.data.name)
-                    setUniversity(response.data.university)
-                    setDegree(response.data.degree)
-                }
+        () => {
+
+            FirebaseProfessorService.retrieve(
+                props.firebase.getFirestoreDb(),
+                (data) => {
+                    setName(data.name)
+                    setUniversity(data.university)
+                    setDegree(data.degree)
+                },
+                params.id
             )
-            .catch(error=>console.log(error))
-        },
+
+        }
+        ,
         [params.id]
     )
 
+
     const handleSubmit = (event) => {
         event.preventDefault()
-        const updatedProfessor = {name,university,degree}
-        axios.put('http://localhost:3002/crud/professors/update/' +params.id, updatedProfessor)
-        .then(
-            res=>{
-                console.log(props)
-                alert("Professor Editado")
-                navigate("/listProfessor")
-            }
-        )
-        .catch(error=>console.log(error))
+        const updatedProfessor =
+        {
+            name, university, degree
+        }
+    
+       FirebaseProfessorService.update(
+           props.firebase.getFirestoreDb(),
+           (ok)=>{
+                alert(`Professor ${name} editado com sucesso.`)
+               if(ok) navigate("/listProfessor")
+           },
+           params.id,
+           updatedProfessor
+       )
     }
 
     return (
@@ -83,4 +105,4 @@ function EditProfessor(props) {
     );
 }
 
-export default EditProfessor;
+export default EditProfessorPage;
